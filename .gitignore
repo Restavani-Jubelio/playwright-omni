@@ -1,12 +1,9 @@
 node_modules/
+.auth/
 .env
-playwright-report/
 test-results/
+playwright-report/
+.state/
 allure-results/
 allure-report/
-screenshots/
-videos/
-traces/
-*.log
 .DS_Store
-Resources/.auth/
