@@ -1,29 +1,20 @@
 {
   "name": "playwright-js-framework",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "private": true,
-  "description": "Enterprise-style Playwright automation framework ",
+  "description": "Playwright E2E for Jubelio: login and sales order",
   "scripts": {
+    "login": "node scripts/login.mjs",
     "test": "playwright test",
     "test:headed": "playwright test --headed",
-    "test:debug": "playwright test --debug",
-    "test:smoke": "playwright test --grep @smoke",
-    "test:regression": "playwright test --grep @regression",
+    "test:demo": "cross-env HIGHLIGHT=1 SLOWMO=1000 playwright test --headed",
+    "test:sales": "playwright test tests/sales",
     "test:ui": "playwright test --ui",
-    "test:chromium": "playwright test --project=chromium",
-    "test:firefox": "playwright test --project=firefox",
-    "test:api": "playwright test tests/api",
-    "report": "playwright show-report",
-    "allure:generate": "allure generate allure-results --clean -o allure-report",
-    "allure:open": "allure open allure-report"
+    "report": "playwright show-report"
   },
   "devDependencies": {
-    "@faker-js/faker": "^9.9.0",
     "@playwright/test": "^1.55.0",
-    "allure-playwright": "^3.3.0",
+    "cross-env": "^10.0.0",
     "dotenv": "^17.2.1"
-  },
-  "dependencies": {
-    "sharp": "^0.35.4"
   }
 }
