@@ -5,15 +5,22 @@
   "description": "Playwright E2E for Jubelio: login and sales order",
   "scripts": {
     "login": "node scripts/login.mjs",
-    "test": "playwright test",
-    "test:headed": "playwright test --headed",
-    "test:demo": "cross-env HIGHLIGHT=1 SLOWMO=1000 playwright test --headed",
-    "test:sales": "playwright test tests/sales",
+    "allure:clean": "node -e \"require('fs').rmSync('allure-results',{recursive:true,force:true})\"",
+    "test": "npm run allure:clean && playwright test",
+    "test:headed": "npm run allure:clean && playwright test --headed",
+    "test:demo": "npm run allure:clean && cross-env HIGHLIGHT=1 SLOWMO=1000 playwright test --headed",
+    "test:sales": "npm run allure:clean && playwright test tests/sales",
     "test:ui": "playwright test --ui",
-    "report": "playwright show-report"
+    "report": "playwright show-report",
+    "allure:serve": "allure generate allure-results --output allure-report --open",
+    "allure:generate": "allure generate allure-results --output allure-report",
+    "allure:open": "allure open allure-report"
   },
   "devDependencies": {
     "@playwright/test": "^1.55.0",
+    "allure": "^3.20.0",
+    "allure-js-commons": "^3.13.0",
+    "allure-playwright": "^3.13.0",
     "cross-env": "^10.0.0",
     "dotenv": "^17.2.1"
   }

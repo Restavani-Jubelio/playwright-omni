@@ -1,6 +1,7 @@
 const { expect } = require('@playwright/test');
 const { click, check, getText } = require('../utils/element-helper');
 const { open, pickOption, scanProduct, pickProduct, saveForm, filterStatus, search, selectRow, row } = require('../utils/ui-helper');
+const { highlight } = require('../utils/action-highlighter');
 
 /** Penjualan > Transaksi Penjualan > Pesanan */
 class SalesOrderPage {
@@ -16,7 +17,7 @@ class SalesOrderPage {
     this.lblTransaksiPenjualan = page.getByRole('heading', { name: 'Transaksi Penjualan' });
     this.btnTambahBaru = page.locator('xpath=//button[normalize-space()="Tambah Baru"]');
     this.txtCariPesanan = page.locator('xpath=//input[@placeholder="Cari Pesanan"]');
-    this.btnProsesPesanan = page.locator('xpath=//button[normalize-space()="Proses Pesanan"]');
+   
 
     // Tambah Pesanan form
     this.lblTambahPesanan = page.getByRole('heading', { name: 'Tambah Pesanan' });
@@ -75,14 +76,19 @@ class SalesOrderPage {
     return { id, no };
   }
 
-  /** Siap Proses -> select the order -> Proses Pesanan */
-  async processOrder(orderNo) {
-    await filterStatus(this.page, 'Siap Proses');
-    await search(this.txtCariPesanan, orderNo);
-    await selectRow(this.page, orderNo);
-    await click(this.btnProsesPesanan);
-    await expect(row(this.page, orderNo)).toBeHidden();
-  }
+ /** Siap Proses -> search the order and make sure it shows up (and stays after the list reloads) */
+async findInSiapProses(orderNo) {
+  await filterStatus(this.page, 'Siap Proses');
+  await search(this.txtCariPesanan, orderNo);
+
+  const orderRow = row(this.page, orderNo);
+  await expect(orderRow).toBeVisible();
+  // The list can reload once more after a search: wait until it is done, then check again
+  await this.page.waitForLoadState('networkidle');
+  await expect(orderRow).toBeVisible();
+  // Red box around the found row in demo mode
+  await highlight(orderRow);
+}
 }
 
 module.exports = { SalesOrderPage };

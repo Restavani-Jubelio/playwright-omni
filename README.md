@@ -11,6 +11,8 @@ Test otomatis Jubelio: **login** dan **membuat pesanan penjualan** sampai dipros
 
 ## Setup
 
+Butuh **Node.js** (LTS). Laporan Allure memakai Allure 3, **tanpa Java**.
+
 ```bash
 npm install
 npx playwright install chromium
@@ -29,8 +31,22 @@ npm test               # login + sales order (browser tidak kelihatan)
 npm run test:headed    # browser kelihatan
 npm run test:demo      # browser kelihatan + jeda 1 detik tiap aksi + elemen yang dipakai diberi kotak merah
 npm run test:sales     # sales order saja (login tetap jalan duluan)
-npm run report         # laporan hasil run terakhir (screenshot, video, trace kalau gagal)
+npm run report         # laporan bawaan Playwright (screenshot & video setiap test, trace kalau gagal)
 ```
+
+## Laporan Allure
+
+Setiap `npm test` / `test:headed` / `test:demo` / `test:sales` menghapus hasil lama, lalu mencatat hasil baru ke `allure-results/`.
+
+```bash
+npm run allure:serve      # buat laporan dan langsung buka di browser (Ctrl+C untuk menutup)
+npm run allure:generate   # simpan laporan ke folder allure-report/
+npm run allure:open       # buka laporan dari allure-report/
+```
+
+- Daftar test dikelompokkan **Jubelio › fitur › story** (diatur lewat `allure.epic/feature/story/severity` di awal setiap test dan `groupBy` di `allurerc.mjs`).
+- Klik satu test → tab **Overview**: setiap `test.step` beserta screenshot-nya; tab **Attachments**: screenshot setiap step (`attachScreenshot` di `utils/report-helper.js`), screenshot akhir, dan **video** rekaman test.
+- Laporan hanya menampilkan step bisnis (`detail: false` di `playwright.config.js`), bukan setiap klik internal.
 
 ## Struktur
 
@@ -44,6 +60,9 @@ utils/
   ui-helper.js           gabungan aksi: pilih dropdown, cari, centang baris, tambah produk, simpan form, tutup popup
   action-highlighter.js  kotak merah saat test:demo
   env.js                 baca data test dari .env
+  report-helper.js       attachScreenshot: tempel screenshot ke laporan
+allure-results/  (otomatis) catatan hasil run untuk laporan Allure
+allurerc.mjs     pengaturan laporan Allure 3 (nama laporan, pengelompokan)
 fixtures/   test-fixtures.js: setiap page otomatis menutup popup "Otorisasi Ulang Toko" dan membatalkan dialog hapus
 scripts/    login.mjs: login manual (cadangan kalau tidak mau simpan password di .env)
 ```

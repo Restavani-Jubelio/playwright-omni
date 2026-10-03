@@ -9,7 +9,22 @@ module.exports = defineConfig({
   retries: 0,
   timeout: 5 * 60 * 1000,
   expect: { timeout: 15000 },
-  reporter: [['list'], ['html', { open: 'never' }]],
+  reporter: [
+    ['list'],
+    ['html', { open: 'never' }],
+    // Allure: `npm run allure:serve` after a run (needs Java)
+    ['allure-playwright', {
+      resultsDir: 'allure-results',
+      // Show only the business steps (test.step), not every internal Playwright call
+      detail: false,
+      suiteTitle: false,
+      environmentInfo: {
+        Application: 'Jubelio',
+        URL: process.env.BASE_URL || 'https://v2.jubelio.com',
+        Browser: 'Chromium',
+      },
+    }],
+  ],
   use: {
     baseURL: process.env.BASE_URL || 'https://v2.jubelio.com',
     storageState: '.auth/user.json',
@@ -18,8 +33,10 @@ module.exports = defineConfig({
     launchOptions: { slowMo: Number(process.env.SLOWMO || 0) },
     actionTimeout: 15000,
     navigationTimeout: 30000,
-    screenshot: 'only-on-failure',
-    video: 'retain-on-failure',
+    // Screenshot at the end of every test (passed or failed); steps add their own (utils/report-helper.js)
+    screenshot: 'on',
+    // Video of every test (passed or failed) -> attached to the Allure report
+    video: 'on',
     trace: 'retain-on-failure',
   },
   projects: [
