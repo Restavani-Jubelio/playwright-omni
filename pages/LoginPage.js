@@ -18,6 +18,10 @@ class LoginPage {
   }
 
   async login(email, password) {
+    await this.page.waitForLoadState('load', { timeout: 15000 }).catch(() => {});
+    // Syarat sebenarnya: kolom email sudah bisa diketik
+    await expect(this.txtInputEmail).toBeEditable();
+  
     await sendKeys(this.txtInputEmail, email);
     await sendKeys(this.txtInputPassword, password);
     await click(this.btnLogin);

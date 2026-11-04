@@ -19,12 +19,11 @@ async function autoDismissPopups(page) {
   const reauth = page.getByRole('dialog').filter({ hasText: 'Otorisasi Ulang Toko' });
   await page.addLocatorHandler(reauth, async (dialog) => {
     await page.keyboard.press('Escape');
-    if (await dialog.isVisible()) {
-      // X button in the top-right corner
-      const box = await dialog.boundingBox();
-      if (box) await page.mouse.click(box.x + box.width - 25, box.y + 25);
-    }
-    await dialog.waitFor({ state: 'hidden', timeout: 5000 });
+if (await dialog.isVisible()) {
+  // Tutup pop-up dengan Escape (cara standar menutup dialog MUI)
+  await page.keyboard.press('Escape');
+}
+await dialog.waitFor({ state: 'hidden', timeout: 5000 });
   });
 }
 
