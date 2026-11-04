@@ -30,7 +30,12 @@ class SalesOrderPage {
     this.btnSimpan = page.locator('xpath=//button[normalize-space()="Simpan"]');
 
     // Detail page heading, e.g. "Pesanan - SO-000006866"
-    this.lblDetailPesanan = page.getByRole('heading', { name: /Pesanan - SO-\d+/ });
+    // this.lblDetailPesanan = page.getByRole('heading', { name: /Pesanan - SO-\d+/ });
+
+    this.lblDetailPesanan = page
+      .locator('h1, h2, h3, h4, h5, h6, [role="heading"]')
+      .filter({ hasText: /Pesanan - SO-\d+/ })
+      .first();
   }
 
   async openList() {
@@ -68,13 +73,15 @@ class SalesOrderPage {
   }
 
   /** Save and return the order id and the number Jubelio generated ([auto], e.g. SO-000006865). */
-  async save() {
-    const id = await saveForm(this.page, this.btnSimpan, /core-api\/sales\/orders\/?$/, 'Transaksi Penjualan');
-    await open(this.page, `/sales/transactions/orders/detail/${id}`);
-    const no = (await getText(this.lblDetailPesanan)).match(/SO-\d+/)[0];
-    await this.openList();
-    return { id, no };
-  }
+async save() {
+  const id = await saveForm(this.page, this.btnSimpan, /core-api\/sales\/orders\/?$/, 'Transaksi Penjualan');
+  await open(this.page, `/sales/transactions/orders/detail/${id}`);
+  // Tunggu judul detail tampil; memicu penangan pop-up bila muncul, batas 30 detik
+  await expect(this.lblDetailPesanan).toBeVisible({ timeout: 30000 });
+  const no = (await getText(this.lblDetailPesanan)).match(/SO-\d+/)[0];
+  await this.openList();
+  return { id, no };
+}
 
  /** Siap Proses -> search the order and make sure it shows up (and stays after the list reloads) */
 async findInSiapProses(orderNo) {

@@ -1,0 +1,21 @@
+{
+  "name": "playwright-omni",
+  "image": "mcr.microsoft.com/playwright:v1.63.0-noble",
+  "runArgs": ["--ipc=host", "--init"],
+  "postCreateCommand": "apt-get update && apt-get install -y tmux && npm ci",
+  "features": {
+    "ghcr.io/devcontainers/features/desktop-lite:1": {}
+  },
+  "containerEnv": {
+    "VNC_RESOLUTION": "1920x1080x16"
+  },
+  "forwardPorts": [6080],
+  "portsAttributes": {
+    "6080": { "label": "Desktop (noVNC)" }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": ["ms-playwright.playwright"]
+    }
+  }
+}
